@@ -1,0 +1,25 @@
+export interface AnchorPoint {
+  x: number;
+  y: number;
+}
+
+export function interpolate(value: number, anchors: AnchorPoint[]): number {
+  if (!anchors || anchors.length === 0) return 0;
+  
+  const sorted = [...anchors].sort((a, b) => a.x - b.x);
+
+  if (value <= sorted[0].x) return sorted[0].y;
+  if (value >= sorted[sorted.length - 1].x) return sorted[sorted.length - 1].y;
+
+  for (let i = 0; i < sorted.length - 1; i++) {
+    const p1 = sorted[i];
+    const p2 = sorted[i + 1];
+    if (value >= p1.x && value <= p2.x) {
+      if (p2.x === p1.x) return p1.y;
+      const slope = (p2.y - p1.y) / (p2.x - p1.x);
+      return p1.y + slope * (value - p1.x);
+    }
+  }
+
+  return 0;
+}
